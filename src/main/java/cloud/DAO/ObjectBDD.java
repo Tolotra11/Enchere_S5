@@ -371,7 +371,9 @@ public class ObjectBDD {
                     DateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                     v.add("'" + sdf.format(this.getClass().getMethods()[idMethod].invoke(this)) + "'");
                 } else {
-                    v.add("'" + this.getClass().getMethods()[idMethod].invoke(this).toString() + "'");
+                    String donne = this.getClass().getMethods()[idMethod].invoke(this).toString();
+                    String escape = donne.replace("'", "''");
+                    v.add("'" + escape + "'");
                 }
             }
         }
@@ -415,6 +417,42 @@ public class ObjectBDD {
                 con.close();
             }
         }
+    }
+    public int insertReturningId(Connection con) throws SQLException, Exception {
+        java.sql.Statement stmt = null;
+        int returningId = 0;
+        ResultSet rs = null;
+       boolean conNull = Util.connectionNull(con);
+        if(conNull){
+            con = Util.getConnection(); 
+        }
+        try {
+            con.setAutoCommit(false);
+            String[] data = this.igetData(con);
+            String[] col = this.icolumnName( nomDeTable, con);
+            String colonne = Concat.strcatV(col);
+            String dataToInsert = Concat.strcatV(data);
+            String dataForSync = Concat.strcatWithCote(data);
+            String request = "INSERT INTO " + nomDeTable + "(" + colonne + ") VALUES(" + dataToInsert + ") returning "+this.pkey;
+            System.out.print(request);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(request);
+           while(rs.next()){
+               returningId = rs.getInt(this.pkey.toLowerCase());
+           }
+            con.commit();
+        } catch (Exception e) {
+            con.rollback();
+            throw e;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if(conNull){
+                con.close();
+            }
+        }
+        return returningId;
     }
 
     ///MISE A JOUR

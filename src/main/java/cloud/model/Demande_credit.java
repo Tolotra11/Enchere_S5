@@ -9,6 +9,7 @@ public class Demande_credit extends ObjectBDD{
     private Date dateDemande;
     private Double valeur;
     private Integer utilisateurId;
+    private Integer etat;
     public Integer getId() {
         return id;
     }
@@ -25,6 +26,9 @@ public class Demande_credit extends ObjectBDD{
         return valeur;
     }
     public void setValeur(Double valeur) {
+        if(valeur <= 0){
+            
+        }
         this.valeur = valeur;
     }
     public Integer getUtilisateurId() {
@@ -39,6 +43,12 @@ public class Demande_credit extends ObjectBDD{
     }
     public Demande_credit() {
         this.init();
+    }
+    public Integer getEtat() {
+        return etat;
+    }
+    public void setEtat(Integer etat) {
+        this.etat = etat;
     }
     
 }
