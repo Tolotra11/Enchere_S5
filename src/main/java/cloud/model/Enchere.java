@@ -13,7 +13,27 @@ public class Enchere extends ObjectBDD{
     private Integer categorieId;
     private Integer utilisateurId;
     private Integer statut;
-    public Integer getId() {
+    private String titre;
+    
+   
+	public Enchere(String description, Double prixMinimal, Double duree, Timestamp dateEnchere, Integer categorieId,
+			Integer utilisateurId, Integer statut) {
+		super();
+		this.description = description;
+		this.prixMinimal = prixMinimal;
+		this.duree = duree;
+		this.dateEnchere = dateEnchere;
+		this.categorieId = categorieId;
+		this.utilisateurId = utilisateurId;
+		this.statut = statut;
+	}
+	 public String getTitre() {
+			return titre;
+		}
+		public void setTitre(String titre) {
+			this.titre = titre;
+		}
+	public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
@@ -69,6 +89,13 @@ public class Enchere extends ObjectBDD{
         this.init();
     }
     
-    
+    public void save() {
+    	try {
+			this.insert(null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
     
 }
