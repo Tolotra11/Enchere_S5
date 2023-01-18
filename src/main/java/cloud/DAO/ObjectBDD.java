@@ -390,7 +390,7 @@ public class ObjectBDD {
             con = Util.getConnection(); 
         }
         try {
-            con.setAutoCommit(false);
+           // con.setAutoCommit(false);
             String[] data = this.igetData(con);
             String[] col = this.icolumnName( nomDeTable, con);
             String colonne = Concat.strcatV(col);
@@ -405,9 +405,9 @@ public class ObjectBDD {
             if(synchronalizable == true){
                 stmt.execute("INSERT INTO requetenonenvoye(sql) VALUES('"+request2+"')");
             }
-            con.commit();
+           // con.commit();
         } catch (Exception e) {
-            con.rollback();
+            //con.rollback();
             throw e;
         } finally {
             if (stmt != null) {
@@ -427,7 +427,7 @@ public class ObjectBDD {
             con = Util.getConnection(); 
         }
         try {
-            con.setAutoCommit(false);
+           // con.setAutoCommit(false);
             String[] data = this.igetData(con);
             String[] col = this.icolumnName( nomDeTable, con);
             String colonne = Concat.strcatV(col);
@@ -440,9 +440,9 @@ public class ObjectBDD {
            while(rs.next()){
                returningId = rs.getInt(this.pkey.toLowerCase());
            }
-            con.commit();
+          //  con.commit();
         } catch (Exception e) {
-            con.rollback();
+            //con.rollback();
             throw e;
         } finally {
             if (stmt != null) {

@@ -1,7 +1,9 @@
 package cloud.model;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -130,7 +132,19 @@ public class Utilisateur extends ObjectBDD{
         }
         return fin;
     }
-    
-
+    public void recharger(double cred) throws Exception{
+        if(cred <= 0){
+            throw new Exception("Montant invalide");
+        }
+        else{
+            Demande_credit dc = new Demande_credit();
+            Date now = Date.valueOf(LocalDate.now());
+            dc.setDateDemande(now);
+            dc.setValeur(cred);
+            dc.setUtilisateurId(this.id);
+            dc.setEtat(0);
+            dc.insert(null);
+;        }
+    }
     
 }
