@@ -24,7 +24,7 @@ public class Encherecontroller {
 	    						   @RequestHeader(name="categorieId", required=false) Integer categorieId,
 	    						   @RequestHeader(name="utilisateurId", required=false) Integer utilisateurId,
 	    						   @RequestHeader(name="titre", required=false) String titre,
-	    						   @RequestHeader(name="statut", required=false) Integer statut){	        
+	    						   @RequestHeader(name="statut", required=false) Integer statut) throws Exception{	        
 		 	Enchere v = new Enchere();
 	        v.setDescription(description);
 	        v.setPrixMinimal(prixMinimal);

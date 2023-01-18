@@ -82,8 +82,20 @@ public class Enchere extends ObjectBDD{
     public Double getDuree() {
         return duree;
     }
-    public void setDuree(Double duree) {
+    public void setDuree(Double duree) throws Exception {
+    	Connection con=null;
+    	Parametre p=new Parametre();
+    	Object[] op = p.find(con);
+    	p = (Parametre)op[0];
+    	if(duree<p.getDureeEnchereMin()) {
+    		throw new Exception("duree trop courte");
+    	}if(duree>p.getDureeEnchereMax()) {
+    		throw new Exception("duree trop long");
+    	}
+    	if(duree>=p.getDureeEnchereMin() && duree<=p.getDureeEnchereMax()) {
         this.duree = duree;
+    	}
+    	
     }
     public Timestamp getDateEnchere() {
         return dateEnchere;
