@@ -26,6 +26,7 @@ import com.mongodb.client.MongoDatabase;
 import cloud.DAO.ObjectBDD;
 import cloud.util.ConnectionMongo;
 import cloud.util.Util;
+import net.bytebuddy.asm.Advice.This;
 
 
 
@@ -189,23 +190,37 @@ public class Enchere extends ObjectBDD {
 			Instant instant = Instant.ofEpochMilli(this.getDateEnchere().getTime());
 			LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 			System.out.println(localDateTime);
+			filtre.append("dateenchere",this.getDateEnchere().toString());
 			double Duree = getDuree();
+			filtre.append("Duree",getDuree().toString());
 			int DureeEnSeconde = (int) Duree * 3600 * 24;
 			System.out.println(localDateTime);
 			localDateTime = localDateTime.plusSeconds(DureeEnSeconde);
 			System.out.println(localDateTime);
 			filtre.append("datefin", Timestamp.valueOf(localDateTime).toString());
 			System.out.println(filtre.toJson());
-			filtre.append("prixdepart", this.getPrixMinimal()).append("description", this.getDescription())
-					.append("Nom", this.getTitre());
+			filtre.append("prixdepart", this.getPrixMinimal());
+			filtre.append("description", this.getDescription());
+			filtre.append("Titre", this.getTitre());
 			System.out.println(filtre.toJson());
 			Categorie ca = new Categorie();
 			ca.setId(this.getCategorieId());
 			ca = (Categorie) ca.find(c)[0];
-			filtre.append("Categorie", ca.getNomCat());
+			
+			Utilisateur user = new Utilisateur();
+			user.setId(this.getUtilisateurId());
+			user =(Utilisateur) user.find(c)[0];
+			
+			filtre.append("Utilisateurid", user.getId());
+			filtre.append("UtilisateurEmail", user.getLogin());
+			filtre.append("Nom", user.getNom());
+			filtre.append("Prenom", user.getPrenom());
+			filtre.append("UserCredit", user.getCredit());
+			
+			filtre.append("Categorie", this.getCategorieId());
+			filtre.append("NomCategorie", ca.getNomCat());
+			filtre.append("Statut", this.getStatut().toString());
 			System.out.println(filtre.toJson());
-//            this.setEncherir(new ArrayList<>());
-//            filtre.append("encherir", this.getEncherir());
 			collection.insertOne(filtre);
 		} catch (Exception ex) {
 			if (c != null)
