@@ -281,44 +281,60 @@ public class Enchere extends ObjectBDD {
 
 	public static String construct_request(String titre, String description, Double prixMinimal, Double prixMaximal,
 			String dateDebut, String dateFin, Integer categorieId, Integer statut) {
+			String dateDebut, String dateFin, String categorieId, String statut) {
 		String requtes = "SELECT  * FROM enchere where 1=1 ";
 		try {
 			if (titre != null) {
+			if (!titre.equalsIgnoreCase("")) {
 				requtes += "AND titre like '%" + titre + "%'";
 			}
 			if (description != null) {
+			if (!description.equalsIgnoreCase("")) {
 				requtes += "AND description like '%" + description + "%'";
 			}
 			if (statut != null) {
+			if (!statut.toString().equalsIgnoreCase("")) {
 				requtes += " AND statut='" + statut + "'";
 			}
 			if (categorieId != null) {
+			if (!categorieId.toString().equalsIgnoreCase("")) {
 				requtes += " AND categorieid='" + categorieId + "'";
 			}
 			if (dateFin != null || dateDebut != null) {
 				if (dateFin != null && dateDebut != null) {
+			System.out.println("erico");
+			System.out.println(dateFin +"||"+dateDebut);
+			if ((!dateFin.equalsIgnoreCase("")) || (!dateDebut.equalsIgnoreCase(""))) {
+				if (!dateFin.equalsIgnoreCase("") && !dateDebut.equalsIgnoreCase("")) {
 					requtes += " AND (dateenchere BETWEEN '" + dateDebut + "' and '" + dateFin + "')";
 				}
 				if (dateFin != null && dateDebut == null) {
+				if (!dateFin.equalsIgnoreCase("") && dateDebut.equalsIgnoreCase("")) {
 					requtes += " AND (dateenchere <= '" + dateFin + "')";
 				}
 				if (dateFin == null && dateDebut != null) {
+				if (dateFin.equalsIgnoreCase("") && !dateDebut.equalsIgnoreCase("")) {
 					requtes += " AND (dateenchere >= '" + dateDebut + "')";
 				}
 			}
 			if (prixMaximal != null || prixMinimal != null) {
 				if (prixMaximal != null && prixMinimal != null) {
+			if (prixMaximal != 0 || prixMinimal != 0) {
+				if (prixMaximal != 0 && prixMinimal != 0) {
 					requtes += " AND (prixminimal BETWEEN '" + prixMinimal + "' and '" + prixMaximal + "')";
 				}
 				if (prixMaximal != null && prixMinimal == null) {
+				if (prixMaximal != 0 && prixMinimal == 0) {
 					requtes += " AND (prixminimal <= '" + prixMaximal + "')";
 				}
 				if (prixMaximal == null && prixMinimal != null) {
+				if (prixMaximal == 0 && prixMinimal != 0) {
 					requtes += " AND (prixminimal >= '" + prixMinimal + "')";
 				}
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return requtes;
 	}

@@ -45,10 +45,10 @@ public class Encherecontroller {
 	    		   @RequestHeader(name="description", required=false) String description,
 				   @RequestHeader(name="prixMinimal", required=false) Double prixMinimal, 
 				   @RequestHeader(name="prixMaximal", required=false) Double prixMaximal, 
-				   @RequestHeader(name="dateDebut", required=false) Timestamp dateDebut,
-				   @RequestHeader(name="dateFin", required=false) Timestamp dateFin,
-				   @RequestHeader(name="categorieId", required=false) Integer categorieId,  
-				   @RequestHeader(name="statut", required=false) Integer statut
+				   @RequestHeader(name="dateDebut", required=false) String dateDebut,
+				   @RequestHeader(name="dateFin", required=false) String dateFin,
+				   @RequestHeader(name="categorieId", required=false) String categorieId,  
+				   @RequestHeader(name="statut", required=false) String statut
 	    			) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException{	      
 	 		Connection con=null;
 	 		String requete = Enchere.construct_request(titre,description,prixMinimal,prixMaximal,dateDebut.toString(),dateFin.toString(),categorieId,statut);
