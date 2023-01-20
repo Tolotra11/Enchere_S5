@@ -4,12 +4,15 @@ import java.sql.Date;
 
 import cloud.DAO.ObjectBDD;
 
-public class Demande_credit extends ObjectBDD{
+public class V_demande_credit extends ObjectBDD{
     private Integer id;
     private Date dateDemande;
     private Double valeur;
     private Integer utilisateurId;
     private Integer etat;
+    private String nom;
+    private String prenom;
+    
     public Integer getId() {
         return id;
     }
@@ -38,10 +41,10 @@ public class Demande_credit extends ObjectBDD{
         this.utilisateurId = utilisateurId;
     }
     public void init(){
-        this.setNomDeTable("demande_credit");
+        this.setNomDeTable("v_demande_credit");
         this.setPkey("id");
     }
-    public Demande_credit() {
+    public V_demande_credit() {
         this.init();
     }
     public Integer getEtat() {
@@ -50,5 +53,16 @@ public class Demande_credit extends ObjectBDD{
     public void setEtat(Integer etat) {
         this.etat = etat;
     }
-    
+    public String getNom() {
+        return nom;
+    }
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+    public String getPrenom() {
+        return prenom;
+    }
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
 }
