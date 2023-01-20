@@ -228,6 +228,35 @@ public class Enchere extends ObjectBDD {
 			throw ex;
 		}
 	}
+	
+	
+	public static String constructJsonMongo(String jsonInputString) throws Exception{
+	     
+        String[] ltObject = Enchere.splitObject(jsonInputString, "Document");
+        System.out.println("ltobj: " + ltObject.length);
+        String data=" ";
+        for (int i = 0; i < ltObject.length; i++) {
+            System.out.println(ltObject[i]);
+        }
+        for (int i = 0; i < ltObject.length; i++) {
+           String requeteamboarina = ltObject[i].replace("{{_", "{");
+           String requeteamboarinafarany = requeteamboarina.replace("}}", "}");   
+           ltObject[i] = requeteamboarinafarany;
+           }
+        for (int i = 0; i < ltObject.length; i++) {
+            System.out.println(ltObject[i]);
+           data = data + ltObject[i] +";";}
+       
+        data = data.replace(";", "");
+        System.out.println("data: "+data);
+        return data;
+     }
+     
+     
+      public static String[] splitObject(String str,String var) throws Exception {
+        String[] arrOfstr = str.split(var);
+        return arrOfstr;
+    }
 
 	public static String getListeEnchere() throws Exception {
 		String json ="";

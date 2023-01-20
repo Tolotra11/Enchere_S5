@@ -3,6 +3,7 @@ package cloud.controller;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,7 +61,16 @@ public class Encherecontroller {
 	 	@CrossOrigin
 	    @GetMapping("/enchere/mongo")
 	    public String getenchere() throws Exception{	      
-	 		String json =Enchere.getListeEnchere();
+	 		HashMap<String, Object> map = null;
+	 		String json = null;
+	 		try {
+	 			json =Enchere.getListeEnchere();
+		 		json = Enchere.constructJsonMongo(json);	
+		 		map.put("data", json);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+	 		
 	 		return json;
 	 	}
 	 	
