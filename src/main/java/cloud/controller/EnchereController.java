@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.qos.logback.classic.pattern.Util;
-
-import java.util.List;
 import cloud.model.Enchere;
 import cloud.model.Error;
 import cloud.model.Success;
