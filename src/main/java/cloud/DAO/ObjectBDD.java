@@ -632,6 +632,7 @@ public class ObjectBDD {
                 stmt.close();
             }
             if(conNull){
+                System.out.println("close");
                 con.close();
             }
         }

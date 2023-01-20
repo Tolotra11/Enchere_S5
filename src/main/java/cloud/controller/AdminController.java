@@ -1,5 +1,6 @@
 package cloud.controller;
 
+import java.sql.Connection;
 import java.util.HashMap;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import cloud.model.V_categorie_parEnchere;
 import cloud.model.V_demande_credit;
 import cloud.model.V_rentabitliteCat;
 import cloud.util.TokenUtil;
+import cloud.util.Util;
 
 @RestController
 public class AdminController {
@@ -204,12 +206,27 @@ public class AdminController {
                 Error err = new Error();
                 return err.getError("You're not autorizhed");
             }
-            Object [] stat1 = new V_categorie_parEnchere().find(null,"1=1 ORDER BY nombre DESC");
-            Object [] stat2 = new V_rentabitliteCat().find(null, "1=1 ORDER BY somme DESC");
-            Statistique [] stats = new Statistique[2];
-            stats[0] = new Statistique(stat1);
-            stats[1] = new Statistique(stat2);
-            map.put("data", stats);
+            Connection con = null;
+            try{
+                con = Util.getConnection();
+                Object [] stat1 = new V_categorie_parEnchere().find(con,"1=1 ORDER BY nombre DESC");
+                Object [] stat2 = new V_rentabitliteCat().find(con, "1=1 ORDER BY somme DESC");
+                Statistique [] stats = new Statistique[2];
+                stats[0] = new Statistique(stat1);
+                stats[1] = new Statistique(stat2);
+                map.put("data", stats);
+            }
+            catch(Exception e){
+                Error err = new Error();
+                e.printStackTrace();
+                return err.getError(e.getMessage());
+            }
+            finally{
+                if(con != null){
+                    con.close();
+                }
+            }
+            
         }
         
         return map;

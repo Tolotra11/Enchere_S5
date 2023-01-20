@@ -8,16 +8,17 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import java.util.List;
 
-import javax.lang.model.element.Element;
-
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 import cloud.DAO.ObjectBDD;
 import cloud.util.ConnectionMongo;
@@ -248,62 +249,79 @@ public class Enchere extends ObjectBDD{
 	}
     public void create(Connection c) throws Exception {
 		try {
-
-//            String currentId = "Enchere_" + Integer.toString(this.currentSequence(c));
-			System.out.println(1);
-			this.setId(1);
-//            Enchere en=(Enchere) this.find(c)[0];
+            c.setAutoCommit(false);
 			MongoDatabase database = ConnectionMongo.getMongoConnection();
 			MongoCollection<Document> collection = database.getCollection("enchere");
-			Document filtre = new Document("idEnchere", this.getId());
-			System.out.println(filtre.toJson());
-			Instant instant = Instant.ofEpochMilli(this.getDateEnchere().getTime());
-			LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-			System.out.println(localDateTime);
-			double Duree = getDuree();
-			int DureeEnSeconde = (int) Duree * 3600 * 24;
-			System.out.println(localDateTime);
-			localDateTime = localDateTime.plusSeconds(DureeEnSeconde);
-			System.out.println(localDateTime);
-			filtre.append("datefin", Timestamp.valueOf(localDateTime).toString());
-			System.out.println(filtre.toJson());
-			filtre.append("prixdepart", this.getPrixMinimal()).append("description", this.getDescription())
-					.append("Nom", this.getTitre());
-			System.out.println(filtre.toJson());
+			Document filtre = new Document("enchereId", this.getId());
+			filtre.append("dateenchere",this.getDateEnchere().toString());
+			filtre.append("duree",this.getDuree());
+			filtre.append("prixdepart", this.getPrixMinimal());
+			filtre.append("description", this.getDescription());
+			filtre.append("titre", this.getTitre());
 			Categorie ca = new Categorie();
 			ca.setId(this.getCategorieId());
 			ca = (Categorie) ca.find(c)[0];
-			filtre.append("Categorie", ca.getNomCat());
-			System.out.println(filtre.toJson());
-//            this.setEncherir(new ArrayList<>());
-//            filtre.append("encherir", this.getEncherir());
+			Utilisateur user = new Utilisateur();
+			user.setId(this.getUtilisateurId());
+			user =(Utilisateur) user.find(c)[0];
+			filtre.append("utilisateurid", user.getId());
+			filtre.append("email", user.getLogin());
+			filtre.append("nom", user.getNom());
+			filtre.append("prenom", user.getPrenom());
+			filtre.append("credit", user.getCredit());	
+			filtre.append("categorie", this.getCategorieId());
+			filtre.append("nomCategorie", ca.getNomCat());
+			filtre.append("statut", this.getStatut().toString());
 			collection.insertOne(filtre);
+            c.commit();
 		} catch (Exception ex) {
 			if (c != null)
 				c.rollback();
 			throw ex;
 		}
 	}
+	
+	
+	public static String constructJsonMongo(String jsonInputString) throws Exception{
+	     
+        String[] ltObject = Enchere.splitObject(jsonInputString, "Document");
+        System.out.println("ltobj: " + ltObject.length);
+        String data=" ";
+        for (int i = 0; i < ltObject.length; i++) {
+            System.out.println(ltObject[i]);
+        }
+        for (int i = 0; i < ltObject.length; i++) {
+           String requeteamboarina = ltObject[i].replace("{{_", "{");
+           String requeteamboarinafarany = requeteamboarina.replace("}}", "}");   
+           ltObject[i] = requeteamboarinafarany;
+           }
+        for (int i = 0; i < ltObject.length; i++) {
+            System.out.println(ltObject[i]);
+           data = data + ltObject[i] +";";}
+       
+        data = data.replace(";", "");
+        System.out.println("data: "+data);
+        return data;
+     }
+     
+     
+      public static String[] splitObject(String str,String var) throws Exception {
+        String[] arrOfstr = str.split(var);
+        return arrOfstr;
+    }
 
-	public static String getListeEnchere() throws Exception {
-		String json ="";
-		List<Enchere> retour = new ArrayList<>();
+	public static String getListeEnchere(int id) throws Exception {
+        Bson filter = Filters.eq("enchereId",id);
 		MongoDatabase database = ConnectionMongo.getMongoConnection();
 		MongoCollection<Document> collection = database.getCollection("enchere");
-		FindIterable<Document> iterDoc = collection.find();
-		Iterator it = iterDoc.iterator();
-		List<Element> copy = new ArrayList<Element>();
-		while (it.hasNext()) {
-			String stemp=it.next().toString();
-			System.out.println(stemp);
-			if(stemp.contains("Document")==true) {
-				json = json + stemp;
-			}
-			else {break;}
-		}
-		System.out.println(it);
-		return json;
+		FindIterable<Document> iterDoc = collection.find(filter);
+        MongoCursor<Document> cursor = iterDoc.iterator();
+        List<String> test = new ArrayList<>();
+        while(cursor.hasNext()){
+            test.add(cursor.next().toJson());
+         
+        }
+		return test.toString();
 
 	}
-
 }

@@ -26,6 +26,7 @@ public class UtilisateurController {
             }
             catch(Exception e){
                 Error err = new Error();
+                e.printStackTrace();
                 return err.getError("Email ou mot de passe incorrect");
             }
          
@@ -50,7 +51,9 @@ public class UtilisateurController {
                 myUser.setId(idUser);
                 try{                  
                     myUser.recharger(credit);
-
+                    Success success = new Success();
+                    success.setMessage("Demande envoyé avec succès");
+                    map.put("success",success);
                 }
                 catch(Exception e){
                     Error err = new Error();

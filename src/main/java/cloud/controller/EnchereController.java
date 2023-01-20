@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.qos.logback.classic.pattern.Util;
+
 import java.util.List;
 import cloud.model.Enchere;
 import cloud.model.Error;
@@ -25,12 +27,23 @@ import cloud.util.TokenUtil;
 public class EnchereController {
     @CrossOrigin
     @GetMapping("/encheres")
-    public HashMap<String,Object> getAll(){
+    public HashMap<String,Object> getAll(@RequestHeader(name = "token",required = false) String token){
         HashMap<String,Object> map = null;
+        if(token == null || token.equals("")){
+            Error err = new Error();
+            return err.getError("You're not autorizhed");
+        }
+        else{
         try{
+            String user = new TokenUtil().getUserByToken(token); 
+                if(user == null ){
+                    Error err = new Error();
+                    return err.getError("You're not autorizhed");
+                }     
+                int idUser = Integer.parseInt(user.split(" ")[1]);
             map = new HashMap<>();
             V_enchere ve = new V_enchere();
-            ve.setStatut(0);
+            ve.setUtilisateurId(idUser);
             Object [] lE = ve.find(null);
             map.put("data",lE);
         }
@@ -38,6 +51,7 @@ public class EnchereController {
             Error err = new Error();
             err.setMessage(e.getMessage());
         }
+    }
         return map;
     }
     @CrossOrigin
@@ -88,7 +102,9 @@ public class EnchereController {
                     return err.getError("You're not autorizhed");
                 }
                 else{
+                    Connection con = null;
                     try{
+                        con = cloud.util.Util.getConnection();
                         String user = new TokenUtil().getUserByToken(token); 
                         if(user == null ){
                             Error err = new Error();
@@ -104,7 +120,9 @@ public class EnchereController {
                         v.setUtilisateurId(idUser);
                         v.setStatut(0);
                         v.setTitre(titre);
-                        v.insert(null);
+                        int idEnchere = v.insertReturningId(con);
+                        v.setId(idEnchere);
+                        v.create(con);
                         Success success = new Success();
                         success.setMessage("Insertion effectué avec succès");
                         map.put("success",success);
@@ -113,6 +131,11 @@ public class EnchereController {
                     catch(Exception e){
                         Error error = new Error();
                         return error.getError(e.getMessage());
+                    }
+                    finally{
+                        if(con!= null){
+                            con.close();
+                        }
                     }
                 }     
                 return map; 
@@ -141,4 +164,42 @@ public class EnchereController {
             return map;
 		 	   
 	 	}
+         @CrossOrigin
+         @GetMapping("/fiches/{id}")
+         public String getenchere(@PathVariable int id) throws Exception{	      
+              String json = null;
+              try {
+                  json =Enchere.getListeEnchere(id);        
+             } catch (Exception e) {
+                 e.printStackTrace();
+                 return e.getMessage();             
+                }
+              
+              return json;
+          }
+          
+          @CrossOrigin
+         @PostMapping("/enchere/mongo")
+         public void createMongo(@RequestHeader(name="description", required=false) String description,
+                    @RequestHeader(name="prixMinimal", required=false) Double prixMinimal, 
+                    @RequestHeader(name="duree", required=false) Double duree,
+                    @RequestHeader(name="dateEnchere", required=false) Timestamp dateEnchere,
+                    @RequestHeader(name="categorieId", required=false) Integer categorieId,
+                    @RequestHeader(name="utilisateurId", required=false) Integer utilisateurId,
+                    @RequestHeader(name="titre", required=false) String titre,
+                    @RequestHeader(name="statut", required=false) Integer statut) throws Exception
+                 {	
+              Enchere v = new Enchere();
+             v.setDescription(description);
+             v.setPrixMinimal(prixMinimal);
+             v.setDuree(duree);
+             v.setDateEnchere(dateEnchere);
+             v.setCategorieId(categorieId);
+             v.setUtilisateurId(utilisateurId);
+             v.setStatut(statut);
+             v.setTitre(titre);
+              Connection con=null;
+              v.create(con);
+                 
+          }
 }

@@ -156,6 +156,7 @@ public class Utilisateur extends ObjectBDD{
                 throw new Exception("Login dejà existant");
             }
             else{
+                newUser.setPassword(Util.getMd5(newUser.getPassword()));
                 newUser.setCredit(0.0);
                 newUser.insert(con);
             }
