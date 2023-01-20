@@ -1,12 +1,12 @@
 package cloud.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import cloud.DAO.ObjectBDD;
 
 public class Mouvement_encheres extends ObjectBDD{
     private Integer id;
-    private Date dateMouvement;
+    private Timestamp dateMouvement;
     private Double valeurEnchere;
     private Integer utilisateurId;
     private Integer enchereId;
@@ -16,10 +16,10 @@ public class Mouvement_encheres extends ObjectBDD{
     public void setId(Integer id) {
         this.id = id;
     }
-    public Date getDateMouvement() {
+    public Timestamp getDateMouvement() {
         return dateMouvement;
     }
-    public void setDateMouvement(Date dateMouvement) {
+    public void setDateMouvement(Timestamp dateMouvement) {
         this.dateMouvement = dateMouvement;
     }
     public Double getValeurEnchere() {
@@ -45,6 +45,7 @@ public class Mouvement_encheres extends ObjectBDD{
         this.setPkey("id");
     }
     public Mouvement_encheres() {
+        this.init();
     }
     
 }

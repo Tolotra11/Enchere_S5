@@ -1,10 +1,14 @@
 package cloud.model;
 
+import java.sql.Connection;
+
+
 import cloud.DAO.ObjectBDD;
+import cloud.util.Util;
 
 public class Parametre extends ObjectBDD{
     private Integer id;
-    private Double comission;
+    private Double commission;
     private Double dureeEnchereMin;
     private Double dureeEnchereMax;
     public Integer getId() {
@@ -13,11 +17,11 @@ public class Parametre extends ObjectBDD{
     public void setId(Integer id) {
         this.id = id;
     }
-    public Double getComission() {
-        return comission;
+    public Double getCommission() {
+        return commission;
     }
-    public void setComission(Double comission) {
-        this.comission = comission;
+    public void setCommission(Double comission) {
+        this.commission = comission;
     }
     public Double getDureeEnchereMin() {
         return dureeEnchereMin;
@@ -38,5 +42,21 @@ public class Parametre extends ObjectBDD{
     public Parametre() {
         this.init();
     }
+    public void update() throws Exception{
+        Connection con = null;
+        try{
+            con = Util.getConnection();
+            this.update("id",con);
+        }
+        catch(Exception e){
+            throw e;
+        }
+        finally{
+            if(con != null){
+                con.close();
+            }
+        }
+    }
+
     
 }
