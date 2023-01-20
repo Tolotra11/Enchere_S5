@@ -8,21 +8,26 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.lang.model.element.Element;
 import javax.print.Doc;
 
 import java.sql.Timestamp;
 
 import org.bson.Document;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import cloud.DAO.ObjectBDD;
 import cloud.util.ConnectionMongo;
 import cloud.util.Util;
+
+
 
 public class Enchere extends ObjectBDD {
 	private Integer id;
@@ -209,16 +214,26 @@ public class Enchere extends ObjectBDD {
 		}
 	}
 
-//	public List<Enchere> getListeEnchere() throws Exception {
-//    	List<Enchere> retour = new ArrayList<>();
-//    MongoDatabase database = ConnectionMongo.getMongoConnection();
-//    MongoCollection<Document> collection = database.getCollection("Enchere");
-//    ArrayList<Enchere> le=new ArrayList<Enchere>();
-//    for(Document c:collection.find()){
-//        Enchere e=new Enchere();
-//        e = c.
-//    }
-//}
+	public static String getListeEnchere() throws Exception {
+		String json ="";
+		List<Enchere> retour = new ArrayList<>();
+		MongoDatabase database = ConnectionMongo.getMongoConnection();
+		MongoCollection<Document> collection = database.getCollection("enchere");
+		FindIterable<Document> iterDoc = collection.find();
+		Iterator it = iterDoc.iterator();
+		List<Element> copy = new ArrayList<Element>();
+		while (it.hasNext()) {
+			String stemp=it.next().toString();
+			System.out.println(stemp);
+			if(stemp.contains("Document")==true) {
+				json = json + stemp;
+			}
+			else {break;}
+		}
+		System.out.println(it);
+		return json;
+
+	}
 
 	public static String construct_request(String titre, String description, Double prixMinimal, Double prixMaximal,
 			String dateDebut, String dateFin, Integer categorieId, Integer statut) {

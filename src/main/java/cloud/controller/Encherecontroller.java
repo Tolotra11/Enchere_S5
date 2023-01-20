@@ -56,6 +56,14 @@ public class Encherecontroller {
 		 	   
 	 	}
 	 	
+	 	
+	 	@CrossOrigin
+	    @GetMapping("/enchere/mongo")
+	    public String getenchere() throws Exception{	      
+	 		String json =Enchere.getListeEnchere();
+	 		return json;
+	 	}
+	 	
 	 	@CrossOrigin
 	    @PostMapping("/enchere/mongo")
 	    public void createMongo(@RequestHeader(name="description", required=false) String description,
