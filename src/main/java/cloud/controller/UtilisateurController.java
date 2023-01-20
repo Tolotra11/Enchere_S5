@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import cloud.model.Error;
+import cloud.model.Success;
 import cloud.model.Utilisateur;
 import cloud.util.TokenUtil;
 
@@ -49,7 +50,7 @@ public class UtilisateurController {
                 myUser.setId(idUser);
                 try{                  
                     myUser.recharger(credit);
-                    
+
                 }
                 catch(Exception e){
                     Error err = new Error();
@@ -58,4 +59,25 @@ public class UtilisateurController {
         }
         return map;
     }
+    @CrossOrigin
+    @PostMapping("/inscription")
+    public HashMap<String,Object> inscription(@RequestBody Utilisateur user){
+        HashMap<String,Object> map = null;
+       
+            try{
+                Utilisateur.inscription(user);
+                Success succes = new Success();
+                succes.setMessage("Inscription reussi");
+                map = new HashMap<>();
+                map.put("success", succes);
+            }
+            catch(Exception e){
+                Error err = new Error();
+                return err.getError(e.getMessage());
+            }
+         
+        return map;
+    }
+    
+    
 }

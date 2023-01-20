@@ -15,7 +15,11 @@ import cloud.model.Admin;
 import cloud.model.Demande_credit;
 import cloud.model.Error;
 import cloud.model.Parametre;
+import cloud.model.Statistique;
 import cloud.model.Success;
+import cloud.model.V_categorie_parEnchere;
+import cloud.model.V_demande_credit;
+import cloud.model.V_rentabitliteCat;
 import cloud.util.TokenUtil;
 
 @RestController
@@ -55,7 +59,7 @@ public class AdminController {
                 parametre.update();
                 Success success = new Success();
                 success.setMessage("Configuration effectuée avec succès");
-                map.put("succes", success);
+                map.put("success", success);
             }
             catch(Exception e){  
                 Error err = new Error();
@@ -121,6 +125,39 @@ public class AdminController {
     }
         return map;
     }
+    @CrossOrigin
+    @PutMapping("/refuserCredits/{id}")
+    public HashMap<String,Object> refuserCredit(@RequestHeader(name="token",required=false) String token, @PathVariable int id){
+        HashMap<String, Object> map = null;
+        if(token == null || token.equals("")){
+            Error err = new Error();
+            return err.getError("You're not autorizhed");
+        }
+        else{
+            try{
+                map = new HashMap<>();
+                String user = new TokenUtil().getUserByToken(token);
+                    if(user == null ){
+                        Error err = new Error();
+                        return err.getError("You're not autorizhed");
+                    }
+                Demande_credit dc = new Demande_credit();
+                dc.setId(id);
+                dc = (Demande_credit)dc.find(null)[0];
+                dc.setEtat(2);
+                dc.update("id", null);
+                Success success = new Success();
+                success.setMessage("Succesful");
+                map.put("Succes",success);
+            }
+            catch(Exception e){
+                Error err = new Error();
+                e.printStackTrace();
+                return err.getError(e.getMessage());
+            }
+    }
+        return map;
+    }
     
     @CrossOrigin
     @GetMapping("/demandeCredits")
@@ -138,7 +175,9 @@ public class AdminController {
                             Error err = new Error();
                             return err.getError("You're not autorizhed");
                         }
-                    Object [] listeDemande = new Demande_credit().find(null);
+                        V_demande_credit ve = new V_demande_credit();
+                        ve.setEtat(0);
+                    Object [] listeDemande = ve.find(null);
                     map.put("data", listeDemande);
             }
             catch(Exception e){
@@ -149,7 +188,32 @@ public class AdminController {
         }
         return map;
     }
+   
 }
+    @CrossOrigin
+    @GetMapping("/statistiques")
+    public HashMap<String,Object> statistique(@RequestHeader(name="token",required=false) String token) throws Exception{
+        HashMap<String,Object>  map = new HashMap<>();
+        if(token == null || token.equals("")){
+            Error err = new Error();
+            return err.getError("You're not autorizhed");
+        }
+        else{
+            String user = new TokenUtil().getUserByToken(token);
+            if(user == null ){
+                Error err = new Error();
+                return err.getError("You're not autorizhed");
+            }
+            Object [] stat1 = new V_categorie_parEnchere().find(null,"1=1 ORDER BY nombre DESC");
+            Object [] stat2 = new V_rentabitliteCat().find(null, "1=1 ORDER BY somme DESC");
+            Statistique [] stats = new Statistique[2];
+            stats[0] = new Statistique(stat1);
+            stats[1] = new Statistique(stat2);
+            map.put("data", stats);
+        }
+        
+        return map;
+    }
 
 
 }

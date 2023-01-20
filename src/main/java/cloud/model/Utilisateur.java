@@ -144,7 +144,31 @@ public class Utilisateur extends ObjectBDD{
             dc.setUtilisateurId(this.id);
             dc.setEtat(0);
             dc.insert(null);
-;        }
+        }
+    }
+    public static void inscription(Utilisateur newUser) throws Exception{
+        Connection con = Util.getConnection();
+        try{
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.setLogin(newUser.getLogin());
+            Object [] lu = utilisateur.find(con);
+            if(lu.length != 0){
+                throw new Exception("Login dejà existant");
+            }
+            else{
+                newUser.setCredit(0.0);
+                newUser.insert(con);
+            }
+        }
+        catch(Exception e){
+            throw e;
+        }
+        finally{
+            if(con != null){
+                con.close();
+            }
+        }
+        
     }
     
 }
